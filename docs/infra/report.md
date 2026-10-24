@@ -1,7 +1,11 @@
 # 인프라 동작 확인 기록
 
-## 1. Neon
-(사용자 DB 생성 대기 중)
+## 1. Neon — 2026-10-24
+- 사용자가 Neon 프로젝트 `get-a-job`(AWS Singapore) 생성, `.env.local`에 `DATABASE_URL`(pooled) 저장.
+- `pnpm tsx scripts/migrate.ts` → "마이그레이션 완료 (Neon)"
+- `pnpm tsx scripts/sync.ts` 후 건수: **공고 595 / 진행중 71 / 지원현황 25 / 일정 1**, 중복 id 0
+- sync 한 번 더 실행 → 건수 그대로 (중복 없음)
+- Vercel 함수 지역을 Neon과 가깝게 `vercel.json` `regions: ["sin1"]`
 
 ## 2. 인증 (APP_PASSWORD 잠금) — 2026-10-24 로컬 확인
 테스트용 값(`APP_PASSWORD=test-pw`, `CRON_SECRET=test-cron`)으로 `next dev` 후 curl:
