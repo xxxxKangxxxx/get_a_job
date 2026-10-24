@@ -11,6 +11,7 @@ import { getAccount, updateAccount } from "./oauth";
 import { calendarExists, createAppCalendar, deleteEvent, freeBusy, insertEvent, updateEvent } from "./calendar";
 import { buildDesired, splitBusy } from "./place";
 import { replaceGoogleBusy } from "./busy";
+import { writeCalendarStatus } from "./status";
 
 export const SYNC_DAYS = 30;
 
@@ -92,6 +93,7 @@ export async function syncCalendar(): Promise<SyncResult> {
     }
 
     await updateAccount({ lastSyncAt: new Date(), lastSyncError: null });
+    await writeCalendarStatus();
     return r;
   } catch (e) {
     await updateAccount({ lastSyncError: e instanceof Error ? e.message : String(e) }).catch(() => {});

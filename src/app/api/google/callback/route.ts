@@ -2,6 +2,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { exchangeCode } from "@/lib/google/oauth";
 import { ensureAppCalendar, syncCalendar } from "@/lib/google/sync";
+import { writeCalendarStatus } from "@/lib/google/status";
 
 const back = (req: NextRequest, q: string) => {
   const res = NextResponse.redirect(new URL(`/settings?google=${q}`, req.url));
@@ -18,6 +19,7 @@ export async function GET(req: NextRequest) {
   try {
     await exchangeCode(req.nextUrl.origin, sp.get("code")!);
     await ensureAppCalendar();
+    await writeCalendarStatus();
   } catch (e) {
     console.error("google callback", e);
     return back(req, "error");

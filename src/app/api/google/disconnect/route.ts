@@ -6,6 +6,7 @@ import { db } from "@/db";
 import { googleEventLinks } from "@/db/schema-infra";
 import { disconnect, getAccount } from "@/lib/google/oauth";
 import { deleteCalendar } from "@/lib/google/calendar";
+import { writeCalendarStatus } from "@/lib/google/status";
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
@@ -14,5 +15,6 @@ export async function POST(req: NextRequest) {
   await db.delete(googleEventLinks);
   await db.execute(sql`delete from busy_blocks where source = 'google'`).catch(() => {});
   await disconnect();
+  await writeCalendarStatus();
   return NextResponse.json({ ok: true });
 }

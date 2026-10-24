@@ -15,10 +15,10 @@
 | `POST /api/google/sync` | 지금 동기화. `{ ok, busyRows, created, updated, deleted, unchanged }` |
 | `POST /api/google/disconnect` | "취업 일정" 캘린더 삭제 + 권한 취소. body `{ keepCalendar: true }`면 캘린더는 남김 |
 
-- 서버 코드에서: `import { getCalendarStatus } from "@/lib/google/status"` → contracts의 `CalendarStatus`(+email, error). 백엔드는 `TodayView.calendar`/`ScheduleView.calendar`에 그대로 쓰면 된다.
+- 연결 상태는 연결·동기화·끊기 때마다 `meta` 표 key `calendar_status`에 `{ connected, lastSyncAt }`로 쓴다 (백엔드가 읽음). 서버 코드에서 직접: `getCalendarStatus()` from `@/lib/google/status` (+email, error).
 - `import { syncCalendar } from "@/lib/google/sync"` → 일정을 바꾸는 액션 뒤에 불러도 된다(구글 미연결이면 throw하니 `getAccount()`로 먼저 확인하거나 catch).
 - 동기화 순서: FreeBusy(오늘부터 30일, primary + `GOOGLE_BUSY_CALENDARS`) → `busy_blocks`에서 `source='google'` 행을 그 기간만 지우고 다시 넣음 → `getSchedule(30)`·`getSettings()`·`listPostings({decision:["예정"],status:"진행중"})`로 넣을 이벤트 계산 → 해시 비교로 바뀐 것만 추가·수정·삭제.
-- `busy_blocks` 행: `date`(YYYY-MM-DD), `start_time`/`end_time`("HH:MM", 자정에서 끝나면 "24:00", 하루 전체면 둘 다 null), `title`("개인 일정" — FreeBusy는 제목을 안 줌), `source`("google").
+- `busy_blocks` 행: `date`(YYYY-MM-DD), `start`/`end`("HH:MM", 자정에서 끝나면 "24:00", 하루 전체면 둘 다 null), `title`("개인 일정" — FreeBusy는 제목을 안 줌), `source`("google").
 - 캘린더에 쓰는 것 (D10):
   - 📮 접수 기간: "예정" + 진행중 + 마감 ≥ 오늘 → 접수 시작~마감 종일(투명=바쁨 아님). 지원완료가 되면 사라지고 전형 일정만 남는다. 미결정·보류·x는 안 넣는다.
   - 📌 전형 일정: `DayLoad.events` 중 done 아님, kind ≠ 마감. 시각 있으면 1시간, 없으면 종일.
