@@ -21,3 +21,26 @@
 | 위조 쿠키 | 307 → `/login` |
 | `/api/cron/*` 헤더 없음 / 로그인 쿠키만 | 401 / 401 |
 | `/api/cron/*` `Authorization: Bearer <CRON_SECRET>` | 통과 (라우트 생기기 전이라 404) |
+
+## 3. Vercel 배포
+(GitHub 저장소·Vercel 프로젝트 사용자 준비 대기 중 — 안내문 `02-vercel.md`)
+- `vercel.json`: 함수 지역 `sin1`(Neon 싱가포르와 같은 곳), cron `/api/cron/daily` 매일 23:00 UTC(08:00 KST)
+- `pnpm build` (DATABASE_URL 더미) 통과. 모든 `/api/*`는 요청 시 실행(ƒ), `/login`은 부분 프리렌더(◐)
+
+## 4. 구글 캘린더 — 로컬 확인 (구글 연결 전)
+- `vitest`: FreeBusy → 한국 날짜별 분할(자정 넘김, 하루 전체 = null), 작업 시간대 배치(바쁜 시간 피하기·쪼개기·넘침), 접수 기간은 "예정"만(미결정·보류 제외), 전형 일정(마감 종류 제외) — 통과
+- 임시 로컬 DB에서 `replaceGoogleBusy` 두 번 실행 → google 행만 교체, 수동 행 유지, 중복 없음. `meta.calendar_status` = `{connected:false,lastSyncAt:null}` 기록 확인
+- `/api/google/status` → `{"connected":false,…}`, `/api/google/connect` → GOOGLE_* 없으면 500 (정상)
+- (구글 클라우드 설정·연결 후 테스트 이벤트 확인 예정)
+
+## 5·6. 웹 푸시 / cron — 로컬 확인 (테스트 VAPID 키)
+| 요청 | 결과 |
+|---|---|
+| `GET /api/cron/daily` (CRON_SECRET) | `{"ok":true,"googleSync":{"skipped":"구글 캘린더 미연결"},"briefing":{"sent":0},"decisions":{"prompts":1,"sent":0}}` |
+| `GET /api/cron/briefing`, `/google-sync`, `/decisions` | 각각 200 |
+| `GET /api/push/key` | 공개키 반환 |
+| `POST /api/push/subscribe` 잘못된 body | 400 "잘못된 구독 정보" |
+| 가짜 FCM 구독 저장 후 `POST /api/push/test` | `{"sent":0,"removed":1}` — 만료(404/410) 구독 자동 삭제 |
+| `POST /api/push/decide` | `decideInbox` 호출 `{"ok":true}` |
+| `GET /sw.js` 로그인 없이 | 200 (서비스 워커는 잠그지 않음) |
+- (배포 후 실제 폰 테스트 푸시 확인 예정)
