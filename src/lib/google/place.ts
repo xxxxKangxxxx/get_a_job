@@ -51,8 +51,8 @@ export type PlacedBlock = { itemId: string; company: string; label: string; kind
 export function placeDay(day: Pick<DayLoad, "date" | "blocks" | "busy">, window: AppSettings["workWindow"]): PlacedBlock[] {
   const w = weekday(day.date) === 0 || weekday(day.date) === 6 ? window.weekend : window.weekday;
   const busy = day.busy
-    .filter((b) => b.start && b.end)
-    .map((b) => [toMin(b.start!), toMin(b.end!)] as const)
+    // 시각이 없으면 종일 바쁨
+    .map((b) => [b.start ? toMin(b.start) : 0, b.end ? toMin(b.end) : 1440] as const)
     .sort((a, b) => a[0] - b[0]);
   // 빈 구간 = [시간대] - 바쁜 시간, 그 뒤 [시간대 끝, 24:00] - 바쁜 시간 (넘칠 때만 씀)
   const free = (from: number, to: number) => {
