@@ -1,6 +1,6 @@
 # 인프라 세션 인수인계
 
-먼저 `docs/handoff/README.md`, `docs/PLAN.md`, `docs/handoff/STATUS.md`, `AGENTS.md`(Next.js 16은 바뀐 점이 많다 — `node_modules/next/dist/docs/` 확인)를 읽는다.
+먼저 `docs/handoff/README.md`, `docs/DECISIONS.md`, `AGENTS.md`(Next.js 16은 바뀐 점이 많다 — `node_modules/next/dist/docs/` 확인)를 읽는다.
 
 ## 현재 상태 (총괄 세션이 만든 것)
 - Next.js 16.4 + Tailwind v4 + pnpm. `next.config.ts`에 `cacheComponents: true` (DB 읽는 컴포넌트는 Suspense 필요). 미들웨어는 `src/proxy.ts`(이름 바뀜).
@@ -15,12 +15,14 @@
 4. **구글 캘린더 연동** (`src/lib/google/`, `src/app/api/google/`):
    - OAuth 2.0 (Google Cloud 프로젝트 생성·동의 화면·클라이언트 ID는 사용자와 단계별 진행). 범위: 캘린더 읽기(FreeBusy) + 앱 전용 캘린더 쓰기. 테스트 모드의 refresh token 7일 만료 문제 → 앱을 "프로덕션"으로 게시(미인증 경고 감수)하는 방법 안내.
    - 앱 전용 캘린더 "취업 일정" 생성, 이벤트 upsert/삭제(앱 이벤트 id ↔ 구글 이벤트 id 매핑 테이블 필요).
-   - FreeBusy로 날짜별 바쁜 시간 → 일정 엔진의 `Settings.overrides`(날짜별 가용 시간)에 쓸 수 있는 함수 제공.
+   - FreeBusy로 개인 일정의 바쁜 시간을 읽어 백엔드가 만드는 `busy_blocks` 테이블(date, start, end, title, source)에 채운다. 일정 계산은 백엔드가 그 표를 읽어서 한다. 표가 아직 병합 전이면 총괄에게 `ask`.
+   - 작업 블록·접수 기간·전형 일정을 캘린더에 쓰는 데이터는 `@/server/queries`의 `getSchedule()` 결과(`DayLoad.blocks`, `events`, `deadlines`)를 쓴다. 블록을 실제 시각에 놓을 때는 설정 `workWindow`(평일 19~23시, 주말 10~18시 기본)와 바쁜 시간을 피한다.
    - 캘린더 표시 규칙: 전형별 접수 기간(기본 서류 접수 기간, 전형이 진행되면 현재 단계 일정만) + 작업 블록(시간대 배치). 미결정 공고는 캘린더에 넣지 않는다.
 5. **웹 푸시** (`src/lib/push/`): VAPID, 구독 저장(`push_subscriptions` 테이블 있음), 서비스 워커 `public/sw.js`, 알림 액션 버튼(미결정 공고 "지원/관심없음"). iOS는 홈 화면 추가 후에만 동작.
 6. **cron** (`src/app/api/cron/`): 아침 브리핑(08:00 KST), 구글 캘린더 동기화, 미결정 A급 공고 알림. Vercel Hobby는 하루 1회 제한 → 필요하면 GitHub Actions cron.
 
 ## 경계
-- 화면(UI)은 만들지 않는다. 필요한 API·서버 함수만 만들고 사용법을 `docs/infra/`에 적는다.
-- 스키마 추가가 필요하면 새 테이블만 추가하고(기존 테이블 수정 금지) 마이그레이션을 생성, STATUS.md에 적는다.
-- 외부 서비스에 무언가를 만들거나 배포·푸시하기 전에 사용자에게 확인받는다.
+- 화면(UI)은 만들지 않는다(로그인 화면만 최소한으로). 필요한 API·서버 함수만 만들고 사용법을 `docs/infra/`에 적는다.
+- 사용자가 직접 해야 하는 일(Neon 가입, 구글 클라우드 설정 등)은 단계별 안내문을 `docs/infra/`에 쓰고 총괄에게 `ask`로 보낸다. 총괄이 사용자에게 전달한다. 비밀값은 받지 말고 사용자가 `.env.local`에 직접 넣게 한다.
+- 테이블이 필요하면(구글 토큰, 앱 이벤트 id ↔ 구글 이벤트 id 매핑 등) `src/db/schema-infra.ts`에 새 테이블만 만들고 완료 보고에 적는다. 마이그레이션 생성은 병합 후 총괄이 한다.
+- 외부 서비스에 무언가를 만들거나 배포·git 푸시하기 전에는 총괄에게 `ask`로 확인받는다.

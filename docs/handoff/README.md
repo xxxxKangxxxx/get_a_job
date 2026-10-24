@@ -1,19 +1,20 @@
-# 세션 분담
+# 세션 분담 (Orca 오케스트레이션)
 
-이 프로젝트는 세 세션이 나눠서 진행한다. 세션끼리는 대화를 공유하지 않으므로 **이 폴더의 문서가 유일한 연결 고리**다.
+총괄 세션이 Orca로 작업자 3개를 띄워 지휘한다. 작업자는 각자 Orca worktree(별도 폴더·브랜치)에서 일한다.
 
-| 세션 | 담당 | 시작 문서 | 결과를 남기는 곳 |
+| 역할 | 브랜치 | 시작 문서 | 고칠 수 있는 파일 |
 |---|---|---|---|
-| 총괄 | 계획, 일정 엔진, 데이터 동기화, 기능 로직(서버 액션·API), 화면 통합 | `docs/PLAN.md` | `docs/PLAN.md`, `docs/handoff/STATUS.md` |
-| 디자인 | 레퍼런스 조사 → 방향 제안 → 시안 → 디자인 토큰·컴포넌트 규칙 | `docs/handoff/design.md` | `docs/design/` |
-| 인프라 | Neon, Vercel 배포, 구글 캘린더 OAuth, 웹 푸시, cron | `docs/handoff/infra.md` | `docs/infra/`, 관련 코드 |
+| 기획·총괄 | `master` | `docs/PLAN.md` | `docs/`, `src/contracts/`, 브랜치 병합 |
+| 백엔드 | `backend` | `docs/handoff/backend.md` | `src/db/`, `src/lib/` (google·push 제외), `src/server/`, `scripts/`, `drizzle/` |
+| 프론트엔드(디자인) | `frontend` | `docs/handoff/frontend.md` | `docs/design/`, `src/app/` (api·login 제외), `src/components/`, `src/app/globals.css`, `public/` 아이콘·폰트 |
+| 인프라 | `infra` | `docs/handoff/infra.md` | `src/proxy.ts`, `src/app/login/`, `src/app/api/`, `src/lib/google/`, `src/lib/push/`, `public/sw.js`, `vercel.json`, `.env.example`, `docs/infra/` |
 
-## 규칙
-- 작업을 시작할 때와 끝낼 때 `docs/handoff/STATUS.md`를 읽고 자기 칸을 갱신한다 (무엇을 했는지, 다른 세션이 알아야 할 것, 막힌 것).
-- 자기 담당 파일만 고친다. 남의 영역을 바꿔야 하면 STATUS.md의 "요청" 칸에 적는다.
-  - 디자인: `docs/design/`, 시안 아티팩트. 코드는 고치지 않는다(토큰·컴포넌트 규칙 문서까지만).
-  - 인프라: `src/lib/google/`, `src/lib/push/`, `src/app/api/cron/`, `src/app/api/google/`, `vercel.json`, `.env.example`, `docs/infra/`. `src/db/schema.ts`를 바꿔야 하면 요청으로 남기거나 새 테이블만 추가하고 STATUS에 적는다.
-  - 총괄: 그 밖의 전부(`src/db`, `src/lib/schedule.ts`, `scripts/`, `src/app` 화면).
-- 비밀값(.env.local)은 커밋하지 않는다. 필요한 변수 이름은 `.env.example`에 적는다.
-- 사용자 원본 폴더 `/Users/kang-yeongmo/2026 취업하기/`는 읽기만 한다.
-- 사용자와의 대화는 한국어로 한다.
+## 공통 규칙
+- 먼저 `docs/DECISIONS.md`(결정 기록)와 자기 시작 문서를 읽는다. 결정 기록과 다르게 하지 않는다.
+- **화면 ↔ 서버 약속**: `src/contracts/types.ts`와 `src/server/queries.ts`·`actions.ts`의 함수 이름·인자·반환 모양. 프론트엔드는 이것만 import해서 쓰고, 백엔드는 이 모양을 지키며 구현한다. 바꿔야 하면 총괄에게 `ask`로 요청한다(직접 바꾸지 않는다).
+- 자기 영역 밖 파일은 고치지 않는다. `package.json`에 패키지를 추가하는 것은 괜찮지만 완료 보고에 적는다.
+- DB 스키마 변경은 백엔드만. 인프라가 테이블이 필요하면(예: 구글 토큰) 새 테이블 파일 `src/db/schema-infra.ts`를 만들고 보고에 적는다. 마이그레이션 파일 생성은 병합 후 총괄이 한다.
+- 사용자 결정이 필요하면 직접 묻지 말고 총괄에게 `ask`로 질문한다. 총괄이 사용자에게 물어 답한다.
+- 비밀값(.env.local)은 커밋하지 않는다. 사용자 원본 폴더 `/Users/kang-yeongmo/2026 취업하기/`는 읽기만 한다.
+- 단계마다 자기 브랜치에 커밋한다(푸시 금지). 커밋 메시지 끝에 `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
+- 사용자와 대화할 일이 생기면 한국어로 쉽게.
