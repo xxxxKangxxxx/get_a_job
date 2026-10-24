@@ -89,9 +89,12 @@ export async function deleteEvent(calendarId: string, eventId: string): Promise<
 
 /** 바쁜 시간 구간 (ISO 문자열). calendarIds 기본은 기본 캘린더 */
 export async function freeBusy(timeMin: string, timeMax: string, calendarIds = ["primary"]): Promise<{ start: string; end: string }[]> {
-  const res = await call<{ calendars: Record<string, { busy?: { start: string; end: string }[]; errors?: unknown[] }> }>("/freeBusy", {
+  const res = await call<{ calendars: Record<string, { busy?: { start: string; end: string }[]; errors?: { reason: string }[] }> }>("/freeBusy", {
     method: "POST",
     body: JSON.stringify({ timeMin, timeMax, timeZone: TIME_ZONE, items: calendarIds.map((id) => ({ id })) }),
   });
+  // 캘린더 id가 틀렸거나 볼 권한이 없으면 busy 대신 errors가 온다 → 조용히 0건이 되지 않게 알린다
+  const failed = Object.entries(res.calendars).filter(([, c]) => c.errors?.length).map(([id, c]) => `${id}(${c.errors!.map((e) => e.reason).join(",")})`);
+  if (failed.length) throw new GoogleApiError(`바쁜 시간을 읽지 못한 캘린더: ${failed.join(", ")}`, 400);
   return Object.values(res.calendars).flatMap((c) => c.busy ?? []);
 }
