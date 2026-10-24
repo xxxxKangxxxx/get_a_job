@@ -34,3 +34,4 @@
 - D17. 화면 ↔ 서버 약속은 `src/contracts/types.ts`, 함수는 `src/server/queries.ts`(읽기)·`src/server/actions.ts`(쓰기). 약속 변경은 총괄만.
 - D18. `busy_blocks`(id serial, date, start "HH:MM"|null, end|null, title, source='google', created_at) — 백엔드가 만든 모양이 기준. 종일 일정이면 그날 가용 시간 0. 인프라는 source='google' 행만 날짜 범위로 교체. 캘린더 연결 상태는 `meta.calendar_status` = {connected, lastSyncAt}.
 - D19. (백엔드 구현 판단 승인) 결정 필요 = 적합도 A + 미결정/보류 + 마감 D-7 이내. 포기 적용 = decision 'x'(되돌리기 가능). 시간 늘리기 = 그날 overrides(하루 상한 12시간). 직접 추가한 공고는 받은편지함(new)으로. 연결 공고 없는 면접·인적성 준비는 A로 취급.
+- D20. 홈 디자인(2라운드 선택): 헤더 = 시안4, 받은함 버튼 아이콘·메인(하루 타임라인)·하단 탭바 = 시안2, 색 조합 = 시안3(다크 바탕 + 밝은 시트, 탠저린 바쁨 농도). 홈에 일간(타임라인)/주간(아젠다)/월간(히트맵 달력) 전환을 둔다.
