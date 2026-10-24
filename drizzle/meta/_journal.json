@@ -15,6 +15,13 @@
       "when": 1792845673509,
       "tag": "0001_inbox_rules_busy",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792846475711,
+      "tag": "0002_google_tables",
+      "breakpoints": true
     }
   ]
 }
