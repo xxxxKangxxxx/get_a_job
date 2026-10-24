@@ -44,3 +44,7 @@
 | `POST /api/push/decide` | `decideInbox` 호출 `{"ok":true}` |
 | `GET /sw.js` 로그인 없이 | 200 (서비스 워커는 잠그지 않음) |
 - (배포 후 실제 폰 테스트 푸시 확인 예정)
+
+## master 병합 후 (백엔드 실제 구현 + Neon) — 2026-10-24
+- `git merge master` 후 `busy_blocks`는 drizzle `schema.busyBlocks`로 쓰도록 변경. `tsc` 통과, `vitest` 34개 통과, `pnpm build` 통과.
+- 로컬 dev(Neon 연결) `GET /api/cron/daily` → `{"ok":true, googleSync: 미연결 건너뜀, briefing: sent 0 (구독 없음), decisions: prompts 3}` — 실제 데이터에서 미결정 A급 "지원할까요?" 알림 3건 생성.
