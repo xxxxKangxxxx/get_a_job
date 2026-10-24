@@ -9,7 +9,8 @@ import type { GEventBody } from "./calendar";
 
 const KST_MS = 9 * 3600_000;
 
-export type BusyRow = { date: string; start: string; end: string; title: string; source: "google" };
+/** start/end = null 이면 종일 */
+export type BusyRow = { date: string; start: string | null; end: string | null; title: string; source: "google" };
 
 const toMin = (hhmm: string) => {
   const [h, m] = hhmm.split(":").map(Number);
@@ -30,7 +31,8 @@ export function splitBusy(intervals: { start: string; end: string }[], title = "
     let [d, s] = kst(iv.start);
     const [ed, e] = kst(iv.end);
     while (d < ed) {
-      if (s < 1440) out.push({ date: d, start: toHHMM(s), end: "24:00", title, source: "google" });
+      if (s === 0) out.push({ date: d, start: null, end: null, title, source: "google" });
+      else if (s < 1440) out.push({ date: d, start: toHHMM(s), end: "24:00", title, source: "google" });
       d = addDays(d, 1);
       s = 0;
     }

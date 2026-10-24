@@ -14,6 +14,11 @@ describe("splitBusy", () => {
       { date: "2026-10-27", start: "22:00", end: "24:00", title: "개인 일정", source: "google" },
       { date: "2026-10-28", start: "00:00", end: "01:00", title: "개인 일정", source: "google" },
     ]);
+    // 하루를 통째로 덮으면 종일(null)
+    expect(splitBusy([{ start: "2026-10-26T15:00:00Z", end: "2026-10-27T16:00:00Z" }])).toEqual([
+      { date: "2026-10-27", start: null, end: null, title: "개인 일정", source: "google" },
+      { date: "2026-10-28", start: "00:00", end: "01:00", title: "개인 일정", source: "google" },
+    ]);
   });
 });
 
