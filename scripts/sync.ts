@@ -2,6 +2,7 @@
 // - id 기준 upsert. 두 번 돌려도 중복이 생기지 않는다.
 // - 앱에서 직접 고친 필드(userEditedFields)는 덮어쓰지 않는다.
 // - JSON 원본은 읽기만 한다.
+// - 처음 들어온 공고는 받은편지함(new)으로 가고, 숨김 규칙에 맞으면 자동으로 숨긴다(지원여부는 '' 그대로).
 import "./env";
 import { readFileSync } from "node:fs";
 import { sql, and, eq } from "drizzle-orm";
@@ -33,6 +34,7 @@ function eventKindFor(stage: string): { kind: string; label: string } {
 
 async function main() {
   const { db, schema, usingPglite } = await import("../src/db");
+  const { applyHideRules } = await import("../src/server/data");
   const { postings, applications, events, meta } = schema;
   const path = process.argv[2] ?? DEFAULT_JSON;
   const data = JSON.parse(readFileSync(path, "utf-8")) as { meta: unknown; 공고: SrcPosting[]; 지원현황: SrcApp[] };
@@ -61,7 +63,10 @@ async function main() {
     notes: p.비고 ?? "",
     surveyedAt: asDate(p.조사일),
     origin: "collected" as const,
+    // 새 공고에만 쓰인다 (기존 공고는 아래 upsert에서 건드리지 않음)
+    inboxState: (p.지원여부 ?? "") === "" ? "new" : "seen",
   }));
+  const newIds = rows.filter((r) => !editedById.has(r.id)).map((r) => r.id);
 
   // 덮어쓰지 않을 필드 조합이 같은 행끼리 묶어 한 번에 upsert한다.
   const groups = new Map<string, typeof rows>();
@@ -69,7 +74,7 @@ async function main() {
     const key = [...(editedById.get(r.id) ?? [])].sort().join(",");
     groups.set(key, [...(groups.get(key) ?? []), r]);
   }
-  const updatable = Object.keys(rows[0]).filter((k) => k !== "id" && k !== "origin");
+  const updatable = Object.keys(rows[0]).filter((k) => !["id", "origin", "inboxState"].includes(k));
   const colName = (k: string) => (postings as unknown as Record<string, { name: string }>)[k].name;
 
   for (const [key, group] of groups) {
@@ -81,6 +86,8 @@ async function main() {
         .onConflictDoUpdate({ target: postings.id, set });
     }
   }
+
+  const autoHidden = await applyHideRules(db, { postingIds: newIds });
 
   // ---- 지원현황 ----
   const postingIds = new Set(rows.map((r) => r.id));
@@ -139,6 +146,8 @@ async function main() {
     원본: { 공고: data.공고.length, 지원현황: data.지원현황.length },
     DB건수: { 공고: pn, 진행중: live, 지원현황: an, 일정: en },
     새일정: newEvents,
+    새공고: newIds.length,
+    자동숨김: autoHidden,
     수정보존그룹: [...groups.keys()].filter(Boolean),
   }, null, 1));
 }

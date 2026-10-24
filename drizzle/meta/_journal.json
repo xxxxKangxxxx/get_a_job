@@ -8,6 +8,13 @@
       "when": 1792843889920,
       "tag": "0000_init",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792845673509,
+      "tag": "0001_inbox_rules_busy",
+      "breakpoints": true
     }
   ]
 }
