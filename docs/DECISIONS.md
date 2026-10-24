@@ -32,3 +32,5 @@
 ## 기술
 - D16. Next.js 16 + Tailwind v4 + Drizzle + Neon(로컬은 PGlite) + Vercel. Supabase는 무료 한도 소진으로 쓰지 않는다.
 - D17. 화면 ↔ 서버 약속은 `src/contracts/types.ts`, 함수는 `src/server/queries.ts`(읽기)·`src/server/actions.ts`(쓰기). 약속 변경은 총괄만.
+- D18. `busy_blocks`(id serial, date, start "HH:MM"|null, end|null, title, source='google', created_at) — 백엔드가 만든 모양이 기준. 종일 일정이면 그날 가용 시간 0. 인프라는 source='google' 행만 날짜 범위로 교체. 캘린더 연결 상태는 `meta.calendar_status` = {connected, lastSyncAt}.
+- D19. (백엔드 구현 판단 승인) 결정 필요 = 적합도 A + 미결정/보류 + 마감 D-7 이내. 포기 적용 = decision 'x'(되돌리기 가능). 시간 늘리기 = 그날 overrides(하루 상한 12시간). 직접 추가한 공고는 받은편지함(new)으로. 연결 공고 없는 면접·인적성 준비는 A로 취급.
