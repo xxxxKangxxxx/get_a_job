@@ -1,5 +1,5 @@
 // 앱 전체를 비밀번호 로그인으로 잠근다 (D3).
-// - /login, /api/auth/* : 누구나
+// - /login, /privacy, /api/auth/* : 누구나
 // - /api/cron/*         : CRON_SECRET 헤더로만 (로그인 쿠키 무시)
 // - 그 외               : 서명 쿠키가 있어야 함. 페이지는 /login으로, API는 401.
 import { NextResponse, type NextRequest } from "next/server";
@@ -8,7 +8,7 @@ import { SESSION_COOKIE, verifySessionValue, checkCronAuth } from "@/app/login/_
 export async function proxy(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
 
-  if (pathname === "/login" || pathname.startsWith("/api/auth/")) return NextResponse.next();
+  if (pathname === "/login" || pathname === "/privacy" || pathname.startsWith("/api/auth/")) return NextResponse.next();
 
   if (pathname.startsWith("/api/cron/")) {
     if (checkCronAuth(req.headers.get("authorization"))) return NextResponse.next();
