@@ -13,6 +13,7 @@ import { todayKST } from "../lib/date";
 import { applyHideRules, loadDailyPlan, loadPlanInput, loadSettings, loadSourceMeta, saveDailyPlan } from "./data";
 import { baseHoursOf, buildContext, runPlan, toTodayTasks } from "./plan";
 import { mergeSettings, validateSettingsPatch } from "./settings";
+import { scheduleJustdoSync } from "../lib/justdo/sync";
 
 const DECISIONS = ["", "예정", "보류", "x", "지원완료"];
 const FITS = ["A", "B", "C", ""];
@@ -75,6 +76,7 @@ export async function decideInbox(postingId: string, decision: "예정" | "보�
   if (!res.ok) return res;
   if (ruleId !== null) await applyHideRules(db, { ruleIds: [ruleId] });
   refresh();
+  scheduleJustdoSync();
   return ok();
 }
 
@@ -91,6 +93,7 @@ export async function undoDecision(postingId: string): Promise<ActionResult> {
   }).where(eq(postings.id, postingId));
   if (prev.ruleId !== null) await deleteRule(prev.ruleId);
   refresh();
+  scheduleJustdoSync();
   return ok();
 }
 
@@ -164,6 +167,7 @@ export async function updatePosting(id: string, patch: PostingPatch): Promise<Ac
   set.userEditedFields = withEdited(p.userEditedFields, fields);
   await db.update(postings).set(set).where(eq(postings.id, id));
   refresh();
+  scheduleJustdoSync();
   return ok();
 }
 
@@ -186,6 +190,7 @@ export async function createPosting(input: NewPostingInput): Promise<{ ok: true;
   };
   await db.insert(postings).values({ ...row, userEditedFields: Object.keys(row).filter((k) => k !== "id") });
   refresh();
+  scheduleJustdoSync();
   return { ok: true, id };
 }
 
@@ -205,6 +210,7 @@ export async function markSubmitted(postingId: string, appliedAt?: string): Prom
     log: [{ at: new Date().toISOString(), from: "준비 중", to: stage }],
   }).onConflictDoNothing({ target: applications.id });
   refresh();
+  scheduleJustdoSync();
   return ok();
 }
 

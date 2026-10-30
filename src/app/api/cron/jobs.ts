@@ -5,10 +5,16 @@ import { briefing, decisionPrompts } from "@/lib/push/messages";
 import { sendToAll } from "@/lib/push/server";
 import { syncCalendar } from "@/lib/google/sync";
 import { getAccount } from "@/lib/google/oauth";
+import { justdoConfigured, syncJustdo } from "@/lib/justdo/sync";
 
 export async function runGoogleSync() {
   if (!(await getAccount())) return { skipped: "구글 캘린더 미연결" };
   return syncCalendar();
+}
+
+export async function runJustdoSync() {
+  if (!justdoConfigured()) return { skipped: "justdo 미설정" };
+  return syncJustdo();
 }
 
 export async function runBriefing() {
