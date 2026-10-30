@@ -18,7 +18,7 @@
 ## 2026-10-30 justdo 연동 (D25)
 - 서류 접수 기간을 justdo(https://www.justdo.co.kr) 할 일로 보낸다. 운영 반영 완료: justdo DB 마이그레이션 20261030090000, justdo main 519ea45(Amplify 배포), 연동 토큰 발급(row 58b4dd6c…), get_a_job main b159a85.
 - 운영 연결 시험: 테스트 할 일 생성→삭제 확인. 로컬 .env.local에 JUSTDO_API_URL/TOKEN 있음.
-- 남은 일: Vercel 환경변수 JUSTDO_API_URL, JUSTDO_API_TOKEN 추가 후 Redeploy (사용자).
+- Vercel 환경변수 설정 완료(10/30), 운영 /api/justdo/sync 정상 응답 확인.
 - 홈 시안 선택은 연동 뒤로 미룸 (4라운드 단색판 검토 대기).
 
 ## 내일 할 일
