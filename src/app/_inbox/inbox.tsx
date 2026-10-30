@@ -1,5 +1,5 @@
 "use client";
-// 받은함: 공고마다 지원 / 보류 / 관심 없음을 고른다. 고른 공고는 "지원 예정" 탭에 모이고 justdo로 보내진다.
+// 새 공고: 공고마다 지원 / 보류 / 관심 없음을 고른다. 고른 공고는 "지원 예정" 탭에 모이고 justdo로 보내진다.
 import { useEffect, useState, useTransition } from "react";
 import { ChevronDown, ExternalLink, X } from "lucide-react";
 import type { DismissReason, InboxCard, PostingSummary } from "@/contracts/types";
@@ -74,12 +74,12 @@ export function Inbox({ cards, planned }: { cards: InboxCard[]; planned: Posting
   return (
     <>
       <header className="mb-4">
-        <h1 className="text-[28px] font-bold leading-[34px] tracking-tight">받은함</h1>
+        <h1 className="text-[28px] font-bold leading-[34px] tracking-tight">새 공고</h1>
         <p className="mt-1 text-[14px] text-muted">지원할 공고를 고르면 justdo에 접수 기간이 들어가요.</p>
       </header>
 
       <div role="tablist" className="mb-4 grid grid-cols-2 rounded-xl bg-line/60 p-1 text-[15px] font-semibold">
-        {([["inbox", `고르기 ${inbox.length}`], ["planned", `지원 예정 ${plannedList.length}`]] as const).map(([key, label]) => (
+        {([["inbox", `새 공고 ${inbox.length}`], ["planned", `지원 예정 ${plannedList.length}`]] as const).map(([key, label]) => (
           <button
             key={key}
             role="tab"
@@ -108,7 +108,7 @@ export function Inbox({ cards, planned }: { cards: InboxCard[]; planned: Posting
               </Section>
             )}
             {fresh.length > 0 && (
-              <Section title="새 공고" note="마감 빠른 순">
+              <Section title="다른 공고" note="마감 빠른 순">
                 {fresh.map((c) => (
                   <InboxRow key={c.id} card={c} open={open === c.id} onToggle={() => setOpen(open === c.id ? null : c.id)}
                     onApply={() => decide(c, "예정")} onHold={() => decide(c, "보류")} onDismiss={() => setDismissing(c)} />

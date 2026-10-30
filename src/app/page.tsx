@@ -1,4 +1,4 @@
-// 임시 홈 = 받은함. 공고를 보고 지원할지 고르는 기능만 있다 (D26). 디자인 확정 후 바꾼다.
+// 임시 홈 = 새 공고(받은편지함). 공고를 보고 지원할지 고르는 기능만 있다 (D26). 디자인 확정 후 바꾼다.
 import { Suspense } from "react";
 import { connection } from "next/server";
 import { getInbox, listPostings } from "@/server/queries";

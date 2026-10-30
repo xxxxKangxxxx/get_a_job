@@ -42,7 +42,7 @@ self.addEventListener("notificationclick", (event) => {
         body: JSON.stringify({ postingId, action: event.action }),
       }).catch(() => null);
       // 로그인이 풀렸거나 실패하면 앱을 열어 직접 고르게 한다
-      if (!res || !res.ok) return openOrFocus(url || "/inbox");
+      if (!res || !res.ok) return openOrFocus(url || "/");
       await self.registration.showNotification(event.action === "apply" ? "지원 예정에 넣었어요" : "관심 없음으로 넘겼어요", {
         tag: `decided-${postingId}`, body: "", data: { url: url || "/" },
       });

@@ -30,7 +30,7 @@ export function decisionPrompts(inbox: InboxView, max = 3): PushPayload[] {
     .map((c) => ({
       title: `지원할까요? ${c.company}${c.dday !== null ? ` · D-${c.dday}` : ""}`,
       body: `${c.title}\n${c.impact.message}`,
-      url: "/inbox",
+      url: "/",
       tag: `decide-${c.id}`,
       postingId: c.id,
       actions: [
