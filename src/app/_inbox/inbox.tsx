@@ -9,7 +9,7 @@ import { ddayLabel, isUrgent, metaLine, periodLabel } from "./format";
 type Toast = { key: number; text: string; undo?: () => Promise<{ ok: boolean }> };
 type Tab = "inbox" | "planned";
 
-export function Inbox({ cards, planned }: { cards: InboxCard[]; planned: PostingSummary[] }) {
+export function Inbox({ cards, planned, justdo }: { cards: InboxCard[]; planned: PostingSummary[]; justdo: boolean }) {
   const [tab, setTab] = useState<Tab>("inbox");
   const [hidden, setHidden] = useState<Set<string>>(new Set());
   const [open, setOpen] = useState<string | null>(null);
@@ -75,7 +75,7 @@ export function Inbox({ cards, planned }: { cards: InboxCard[]; planned: Posting
     <>
       <header className="mb-4">
         <h1 className="text-[28px] font-bold leading-[34px] tracking-tight">새 공고</h1>
-        <p className="mt-1 text-[14px] text-muted">지원할 공고를 고르면 justdo에 접수 기간이 들어가요.</p>
+        <p className="mt-1 text-[14px] text-muted">{justdo ? "지원할 공고를 고르면 justdo에 접수 기간이 들어가요." : "지원할 공고를 골라 두면 접수 기간과 준비 일정을 챙겨 드려요."}</p>
       </header>
 
       <div role="tablist" className="mb-4 grid grid-cols-2 rounded-xl bg-line/60 p-1 text-[15px] font-semibold">
@@ -120,7 +120,7 @@ export function Inbox({ cards, planned }: { cards: InboxCard[]; planned: Posting
       ) : plannedList.length === 0 ? (
         <Empty text="아직 지원하기로 한 공고가 없어요." />
       ) : (
-        <Section title="지원 예정" note="justdo에 보내는 중">
+        <Section title="지원 예정" note={justdo ? "justdo에 보내는 중" : "마감 빠른 순"}>
           {plannedList.map((p) => (
             <PlannedRow key={p.id} posting={p}
               onCancel={() => run(`planned:${p.id}`, () => updatePosting(p.id, { decision: "" }), `${p.company} 지원 예정을 취소했어요`,

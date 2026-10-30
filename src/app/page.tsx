@@ -2,6 +2,7 @@
 import { Suspense } from "react";
 import { connection } from "next/server";
 import { getInbox, listPostings } from "@/server/queries";
+import { justdoConfigured } from "@/lib/justdo/sync";
 import { Inbox } from "./_inbox/inbox";
 
 async function InboxData() {
@@ -10,7 +11,7 @@ async function InboxData() {
     getInbox(),
     listPostings({ decision: ["예정"], status: "all", limit: 200 }),
   ]);
-  return <Inbox cards={inbox.cards} planned={planned.items} />;
+  return <Inbox cards={inbox.cards} planned={planned.items} justdo={justdoConfigured()} />;
 }
 
 export default function Home() {
