@@ -1,7 +1,7 @@
 // 설정 기본값과 검증. DB 없이 동작하는 순수 함수만 둔다.
 import type { AppSettings } from "../contracts/types";
 
-/** 설정 기본값과 검증 */
+/** 처음 설치했을 때의 설정 */
 export const DEFAULT_APP_SETTINGS: AppSettings = {
   weekdayHours: 3,
   weekendHours: 6,
