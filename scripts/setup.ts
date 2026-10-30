@@ -1,7 +1,8 @@
-// 처음 설치할 때 한 번: .env.local을 만들고 비밀값을 채운다.  사용법: pnpm first-setup [--email 내@메일]
-// 이미 .env.local이 있으면 비어 있는 값만 채우고, 있는 값은 건드리지 않는다.
+// 처음 설치할 때 한 번.  사용법: pnpm first-setup [--email 내@메일]
+// 1) .env.local을 만들고 비밀값을 채운다 (이미 있으면 빈 값만 채움) 2) data/ 파일 만들기 3) DB 표 만들기
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { randomBytes } from "node:crypto";
+import { execFileSync } from "node:child_process";
 import webpush from "web-push";
 
 const ENV = ".env.local";
@@ -42,3 +43,9 @@ if (filled.includes("APP_PASSWORD")) {
   console.log(`\n앱 비밀번호: ${fill.APP_PASSWORD}\n(${ENV}의 APP_PASSWORD. 바꾸려면 그 값을 고친다)`);
 }
 if (!has("DATABASE_URL")) console.log("\nDATABASE_URL이 비어 있어 로컬 개발 DB(.pglite/)를 쓴다. 배포할 때는 Neon 주소를 넣는다.");
+
+// 2) data/  3) DB — 방금 쓴 .env.local을 읽도록 새 프로세스로 돌린다
+console.log("");
+execFileSync("pnpm", ["exec", "tsx", "scripts/init-data.ts"], { stdio: "inherit" });
+execFileSync("pnpm", ["exec", "tsx", "scripts/migrate.ts"], { stdio: "inherit" });
+console.log("\n다음: data/profile.md에 내 조건을 적고, Claude Code에서 \"새 공고 찾아줘\". 그다음 pnpm dev");

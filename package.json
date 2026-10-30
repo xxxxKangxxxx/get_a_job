@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "first-setup": "tsx scripts/setup.ts && tsx scripts/init-data.ts && tsx scripts/migrate.ts",
+    "first-setup": "tsx scripts/setup.ts",
     "init-data": "tsx scripts/init-data.ts",
     "db:migrate": "tsx scripts/migrate.ts",
     "sync": "tsx scripts/sync.ts",
