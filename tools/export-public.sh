@@ -13,9 +13,7 @@ find "$WORK/pub" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
 git -C "$SRC" archive master | tar -x -C "$WORK/pub"
 
 cd "$WORK/pub"
-mv docs/infra/api.md docs/api.md
 rm -rf docs/STATUS.md docs/DECISIONS.md docs/PLAN.md docs/handoff docs/infra tools
-sed -i '' 's#git clone <이 저장소 주소> get_a_job && cd get_a_job#git clone https://github.com/xxxxKangxxxx/get-a-job.git \&\& cd get-a-job#' README.md
 
 if grep -rnI -E "kang071911|yeongmo|/Users/|indol|2026 취업하기|총괄" . --exclude-dir=.git --exclude=pnpm-lock.yaml; then
   echo "!! 개인 정보로 보이는 값이 있어 멈춘다"; exit 1
