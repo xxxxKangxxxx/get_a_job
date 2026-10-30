@@ -20,6 +20,8 @@
 - 운영 연결 시험: 테스트 할 일 생성→삭제 확인. 로컬 .env.local에 JUSTDO_API_URL/TOKEN 있음.
 - Vercel 환경변수 설정 완료(10/30), 운영 /api/justdo/sync 정상 응답 확인.
 - 10/30 기능용 "새 공고" 화면 배포(D26, 홈 `/`): 지원/보류/관심 없음, 지원 예정 탭. 운영 DB를 원본 JSON과 다시 동기화(공고 626, 새 공고 31) → 지원 예정 7건 justdo 전송.
+- 10/30 각자 설치 방식 준비(D27): first-setup, data/ 폴더, 스킬 2개, README·docs/setup. 새 사본으로 설치→수집→sync→track→화면 확인. 본인 .env.local에 POSTINGS_JSON 지정. 남은 일: 공개 저장소 만들기(사용자 확인), Vercel에 CONTACT_EMAIL 추가(개인정보처리방침 연락처).
+- justdo: 설정 → 외부 연동(토큰 발급·끊기) 배포 (cadc32f).
 - 홈 시안 선택은 연동 뒤로 미룸 (4라운드 단색판 검토 대기).
 
 ## 내일 할 일
