@@ -1,4 +1,4 @@
-// 채용공고_데이터.json → DB 동기화.  사용법: pnpm sync [json 경로]
+// 공고 원본 JSON(기본 data/postings.json, 환경변수 POSTINGS_JSON) → DB 동기화.  사용법: pnpm sync [json 경로]
 // - id 기준 upsert. 두 번 돌려도 중복이 생기지 않는다.
 // - 앱에서 직접 고친 필드(userEditedFields)는 덮어쓰지 않는다.
 // - JSON 원본은 읽기만 한다.
@@ -6,8 +6,8 @@
 import "./env";
 import { readFileSync } from "node:fs";
 import { sql, and, eq } from "drizzle-orm";
-
-const DEFAULT_JSON = "/Users/kang-yeongmo/2026 취업하기/채용공고_데이터.json";
+import { postingsJsonPath } from "./paths";
+import { eventKindFor } from "./stage-event";
 
 type SrcPosting = {
   id: string; 조사일?: string; 기업명: string; 기업형태?: string; 공고명: string; 직무분류?: string;
@@ -22,21 +22,11 @@ type SrcApp = {
 const isDate = (s?: string | null) => !!s && /^\d{4}-\d{2}-\d{2}$/.test(s);
 const asDate = (s?: string | null) => (isDate(s) ? s! : null);
 
-// 현재단계 → 다음 일정의 종류
-function eventKindFor(stage: string): { kind: string; label: string } {
-  if (stage.includes("인적성 대기")) return { kind: "인적성", label: "인적성검사" };
-  if (stage.includes("2차면접 대기")) return { kind: "면접", label: "2차면접" };
-  if (stage.includes("1차면접 대기")) return { kind: "면접", label: "1차면접" };
-  if (stage.includes("최종 대기")) return { kind: "서류발표", label: "최종 발표" };
-  if (stage.includes("결과 대기")) return { kind: "서류발표", label: stage.split(" ")[0] + " 결과 발표" };
-  return { kind: "기타", label: "다음 일정" };
-}
-
 async function main() {
   const { db, schema, usingPglite } = await import("../src/db");
   const { applyHideRules } = await import("../src/server/data");
   const { postings, applications, events, meta } = schema;
-  const path = process.argv[2] ?? DEFAULT_JSON;
+  const path = process.argv[2] ?? postingsJsonPath();
   const data = JSON.parse(readFileSync(path, "utf-8")) as { meta: unknown; 공고: SrcPosting[]; 지원현황: SrcApp[] };
 
   // ---- 공고 ----

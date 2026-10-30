@@ -5,8 +5,16 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "vercel-build": "tsx scripts/migrate.ts && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run",
+    "first-setup": "tsx scripts/setup.ts && tsx scripts/init-data.ts && tsx scripts/migrate.ts",
+    "init-data": "tsx scripts/init-data.ts",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "sync": "tsx scripts/sync.ts",
+    "postings:add": "tsx scripts/add-postings.ts",
+    "track": "tsx scripts/track.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.3.0",

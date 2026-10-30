@@ -44,8 +44,11 @@ export async function removeSubscription(endpoint: string): Promise<void> {
   await db.delete(pushSubscriptions).where(eq(pushSubscriptions.endpoint, endpoint));
 }
 
-/** 모든 기기에 보낸다. 만료된 구독(404/410)은 지운다. */
+export const isPushConfigured = () => !!process.env.VAPID_PUBLIC_KEY && !!process.env.VAPID_PRIVATE_KEY;
+
+/** 모든 기기에 보낸다. 만료된 구독(404/410)은 지운다. 푸시 키가 없으면 아무것도 하지 않는다(선택 기능). */
 export async function sendToAll(payload: PushPayload): Promise<{ sent: number; removed: number; failed: number }> {
+  if (!isPushConfigured()) return { sent: 0, removed: 0, failed: 0 };
   configure();
   const subs = await db.select().from(pushSubscriptions);
   const r = { sent: 0, removed: 0, failed: 0 };

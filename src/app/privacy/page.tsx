@@ -2,6 +2,8 @@
 export const metadata = { title: "개인정보처리방침 · 취업 일정" };
 
 export default function PrivacyPage() {
+  // 설치한 사람의 연락처 (환경변수 CONTACT_EMAIL). 구글 OAuth 동의 화면에 이 페이지를 쓸 때 필요하다.
+  const contact = process.env.CONTACT_EMAIL;
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-10 text-[15px] leading-7">
       <h1 className="mb-6 text-2xl font-semibold">개인정보처리방침</h1>
@@ -9,7 +11,7 @@ export default function PrivacyPage() {
 
       <section className="mb-6">
         <h2 className="mb-2 text-lg font-semibold">1. 앱 소개</h2>
-        <p>&ldquo;취업 일정&rdquo;은 운영자 본인만 사용하는 개인용 앱입니다. 다른 사용자의 가입이나 이용을 받지 않습니다.</p>
+        <p>&ldquo;취업 일정&rdquo;은 설치한 사람 본인만 사용하는 개인용 앱입니다. 다른 사용자의 가입이나 이용을 받지 않습니다.</p>
       </section>
 
       <section className="mb-6">
@@ -40,9 +42,13 @@ export default function PrivacyPage() {
 
       <section>
         <h2 className="mb-2 text-lg font-semibold">5. 연락처</h2>
-        <p>
-          <a className="underline" href="mailto:kang071911@gmail.com">kang071911@gmail.com</a>
-        </p>
+        {contact ? (
+          <p>
+            <a className="underline" href={`mailto:${contact}`}>{contact}</a>
+          </p>
+        ) : (
+          <p>이 앱을 설치한 운영자에게 문의해 주세요.</p>
+        )}
       </section>
     </main>
   );
