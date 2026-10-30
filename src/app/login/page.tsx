@@ -1,4 +1,4 @@
-// 최소한의 로그인 화면. 디자인은 나중에 총괄/프론트엔드가 입힌다.
+// 최소한의 로그인 화면 (디자인은 이후에 입힌다).
 import { Suspense } from "react";
 
 export const metadata = { title: "로그인" };

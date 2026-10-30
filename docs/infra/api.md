@@ -69,7 +69,7 @@ jobs:
       - run: curl -fsS -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" "${{ secrets.APP_URL }}/api/cron/google-sync"
 ```
 
-## 새 테이블 (`src/db/schema-infra.ts`, 마이그레이션은 총괄이 병합 후 생성)
+## 새 테이블 (`src/db/schema-infra.ts`)
 - `google_accounts`: 연결된 구글 계정 1행(id="me"), refresh/access token, 앱 캘린더 id, 마지막 동기화 시각·오류
 - `google_event_links`: 앱 항목 key ↔ 구글 이벤트 id, 내용 해시, 날짜
 - `drizzle.config.ts`의 `schema`를 `["./src/db/schema.ts", "./src/db/schema-infra.ts"]`로 바꿔야 마이그레이션에 포함된다.

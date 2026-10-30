@@ -1,5 +1,5 @@
 // 인프라(구글 캘린더 연동)용 테이블. 기존 테이블(schema.ts)은 건드리지 않는다.
-// 마이그레이션 생성은 병합 후 총괄이 한다 (drizzle.config.ts의 schema에 이 파일 추가 필요).
+// 마이그레이션: pnpm exec drizzle-kit generate (drizzle.config.ts의 schema에 이 파일이 들어 있다).
 import { pgTable, text, timestamp, date } from "drizzle-orm/pg-core";
 
 // 연결된 구글 계정. 혼자 쓰는 앱이라 행은 하나(id = "me")만 쓴다.
