@@ -2,7 +2,7 @@
 // 화면에서 무언가를 바꿀 때 부르는 서버 액션들.
 // 성공하면 화면을 다시 그리도록 revalidatePath를 부르고 { ok: true }를 돌려준다.
 // 앱에서 바꾼 공고·지원 필드는 userEditedFields에 넣어 동기화가 덮어쓰지 않게 한다.
-import { revalidatePath } from "next/cache";
+import { refresh as refreshRouter, revalidatePath } from "next/cache";
 import { and, eq, inArray } from "drizzle-orm";
 import type {
   ActionResult, DismissReason, PostingPatch, NewPostingInput, NewEventInput, AppSettings, Fix, EventKind,
@@ -28,8 +28,9 @@ const fail = (error: string) => ({ ok: false as const, error });
 function refresh() {
   try {
     revalidatePath("/", "layout");
+    refreshRouter(); // 요청마다 읽는 화면(connection)도 새 데이터로 다시 그린다
   } catch {
-    // 요청 밖에서는 revalidatePath를 쓸 수 없다
+    // 요청 밖(스크립트·테스트·라우트 핸들러)에서는 쓸 수 없다
   }
 }
 
