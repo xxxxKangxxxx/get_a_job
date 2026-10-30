@@ -15,6 +15,12 @@
   - Codex r4-01·02·03 단색(#E2F0ED, 다크 #183B42): https://claude.ai/artifact/XiqboPRDRiYPB3mqTvg2Fn 맨 위 (frontend-codex 3c10640)
 - 다음: 사용자가 홈 하나를 고르면 확정 → 받은함·일정·지원현황·공고·설정 시안.
 
+## 2026-10-30 justdo 연동 (D25)
+- 서류 접수 기간을 justdo(https://www.justdo.co.kr) 할 일로 보낸다. 운영 반영 완료: justdo DB 마이그레이션 20261030090000, justdo main 519ea45(Amplify 배포), 연동 토큰 발급(row 58b4dd6c…), get_a_job main b159a85.
+- 운영 연결 시험: 테스트 할 일 생성→삭제 확인. 로컬 .env.local에 JUSTDO_API_URL/TOKEN 있음.
+- 남은 일: Vercel 환경변수 JUSTDO_API_URL, JUSTDO_API_TOKEN 추가 후 Redeploy (사용자).
+- 홈 시안 선택은 연동 뒤로 미룸 (4라운드 단색판 검토 대기).
+
 ## 내일 할 일
 1. 사용자에게 홈 일·주·월 시안 피드백 받기 → 프론트엔드 작업자에게 전달.
 2. 프론트엔드 화면 구현 후 병합·배포. /settings 화면이 생기면 구글 연결 후 404 해결.
