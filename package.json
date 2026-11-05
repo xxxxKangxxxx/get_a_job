@@ -14,7 +14,8 @@
     "db:migrate": "tsx scripts/migrate.ts",
     "sync": "tsx scripts/sync.ts",
     "postings:add": "tsx scripts/add-postings.ts",
-    "track": "tsx scripts/track.ts"
+    "track": "tsx scripts/track.ts",
+    "justdo": "tsx scripts/justdo.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.3.0",

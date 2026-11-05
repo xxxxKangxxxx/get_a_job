@@ -110,7 +110,7 @@ pnpm dev
 |---|---|---|
 | 구글 캘린더 | 내 일정의 빈 시간을 보고 준비 시간을 배치, "취업 일정" 캘린더에 접수 기간·면접 표시 | [google.md](docs/setup/google.md) |
 | 웹 푸시 알림 | 아침 브리핑, 마감 임박 공고 알림 | [push.md](docs/setup/push.md) |
-| justdo 연동 | 지원하기로 한 공고의 접수 기간을 justdo 할 일로 | [justdo.md](docs/setup/justdo.md) |
+| justdo 연동 | 지원하기로 한 공고의 접수 기간을 justdo 할 일로. 토큰을 넣은 뒤 `pnpm justdo`로 연결 확인 | [justdo.md](docs/setup/justdo.md) |
 
 ---
 
@@ -131,6 +131,9 @@ pnpm dev
 **새 버전으로 업데이트하려면?**
 Fork한 저장소에서 GitHub의 **Sync fork** → 내 컴퓨터에서 `git pull` 후 `pnpm install && pnpm db:migrate`. 배포한 경우 Vercel이 다시 배포하면서 DB도 자동으로 맞춥니다.
 
+**justdo 토큰을 넣었는데 아무것도 안 생겨요.**
+justdo에는 **[지원]으로 고른, 마감이 남은 공고**만 들어갑니다. `pnpm dev`를 다시 켜고 `pnpm justdo`를 실행해 연결을 확인한 뒤, 앱에서 공고 하나를 [지원]으로 골라 보세요. 자세한 건 [justdo.md](docs/setup/justdo.md#안-될-때).
+
 **`pnpm dev`에서 오류가 나요.**
 `pnpm install`을 다시 하고, `.env.local`이 있는지 확인하세요(없으면 `pnpm first-setup`). 그래도 안 되면 오류 메시지와 함께 이슈를 남겨 주세요.
 
@@ -145,6 +148,7 @@ Fork한 저장소에서 GitHub의 **Sync fork** → 내 컴퓨터에서 `git pul
 | `pnpm postings:add <파일> [회차]` | 새 공고 배열을 `data/postings.json`에 합침 (검증, 중복은 건너뜀) |
 | `pnpm sync` | `data/postings.json` → DB |
 | `pnpm track <find\|plan\|apply\|step\|skip…> <키워드>` | 지원 계획·제출·전형 결과 기록 (Claude가 대신 실행) |
+| `pnpm justdo` | justdo 연결 확인, 지금 바로 보내기 |
 | `pnpm db:migrate` | DB 표 만들기·갱신 |
 | `pnpm test` | 테스트 |
 
